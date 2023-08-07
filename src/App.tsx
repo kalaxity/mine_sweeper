@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <Cell value="o" />
       </header>
     </div>
   );
+}
+
+// ====== Cell ======
+type CellProps = {
+  value: string
+}
+
+const Cell = (props: CellProps) => {
+  return (
+    <button className='cell'>{props.value}</button>
+  )
 }
 
 export default App;
