@@ -31,16 +31,23 @@ type BoardProps = {
 const Board = (props: BoardProps) => {
   const numberOfCells: number = props.height * props.height;
   // 数字(1~)と爆弾(-1)と虚無(0)をstateで管理して，開封状況をisCellsOpenedで管理したほうがよさそう
-  const [bombs, setBombs] = useState([Array(numberOfCells).fill(false)]);
-  const [cells, setCells] = useState([Array(numberOfCells).fill(null)]);
+  const [isCellsOpened, setIsCellsOpened] = useState([Array(numberOfCells).fill(false)]);
+  const [cells, setCells] = useState([Array(numberOfCells).fill(0)]);
 
   return (
     <div className='column'>
       <div className='row'>
         <Cell value='0' />
         <Cell value='0' />
+        <Cell value='0' />
       </div>
       <div className='row'>
+        <Cell value='0' />
+        <Cell value='0' />
+        <Cell value='0' />
+      </div>
+      <div className='row'>
+        <Cell value='0' />
         <Cell value='0' />
         <Cell value='0' />
       </div>
