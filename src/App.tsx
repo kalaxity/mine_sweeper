@@ -13,12 +13,13 @@ function App() {
 
 // ====== Cell ======
 type CellProps = {
-  value: string
+  value: string,
+  onClick: React.MouseEventHandler // これでいい？
 }
 
 const Cell = (props: CellProps) => {
   return (
-    <button className='cell'>{props.value}</button>
+    <button className='cell' onClick={props.onClick}>{props.value}</button>
   )
 }
 
@@ -34,22 +35,26 @@ const Board = (props: BoardProps) => {
   const [isCellsOpened, setIsCellsOpened] = useState([Array(numberOfCells).fill(false)]);
   const [cells, setCells] = useState([Array(numberOfCells).fill(0)]);
 
+  const handleClick = (i: number) => {
+    alert("[test] " + i + " pushed!");
+  }
+
   return (
     <div className='column'>
       <div className='row'>
-        <Cell value='0' />
-        <Cell value='0' />
-        <Cell value='0' />
+        <Cell value='0' onClick={() => handleClick(0)} />
+        <Cell value='0' onClick={() => handleClick(1)} />
+        <Cell value='0' onClick={() => handleClick(2)} />
       </div>
       <div className='row'>
-        <Cell value='0' />
-        <Cell value='0' />
-        <Cell value='0' />
+        <Cell value='0' onClick={() => handleClick(3)} />
+        <Cell value='0' onClick={() => handleClick(4)} />
+        <Cell value='0' onClick={() => handleClick(5)} />
       </div>
       <div className='row'>
-        <Cell value='0' />
-        <Cell value='0' />
-        <Cell value='0' />
+        <Cell value='0' onClick={() => handleClick(6)} />
+        <Cell value='0' onClick={() => handleClick(7)} />
+        <Cell value='0' onClick={() => handleClick(8)} />
       </div>
     </div>
   )
