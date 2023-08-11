@@ -13,13 +13,24 @@ function App() {
 
 // ====== Cell ======
 type CellProps = {
-  value: string,
+  value: number,
+  isOpened: boolean,
   onClick: React.MouseEventHandler // これでいい？
 }
 
 const Cell = (props: CellProps) => {
+  const display = (props: CellProps): string => {
+    // 開封前
+    if (!props.isOpened) return "";
+
+    // 開封後
+    if (props.value == -1) return "💣";
+    if (props.value == 0) return "";
+    return props.value.toString();
+  }
+
   return (
-    <button className='cell' onClick={props.onClick}>{props.value}</button>
+    <button className='cell' onClick={props.onClick}>{display(props)}</button>
   )
 }
 
@@ -42,19 +53,19 @@ const Board = (props: BoardProps) => {
   return (
     <div className='column'>
       <div className='row'>
-        <Cell value='0' onClick={() => handleClick(0)} />
-        <Cell value='0' onClick={() => handleClick(1)} />
-        <Cell value='0' onClick={() => handleClick(2)} />
+        <Cell value={1} isOpened={false} onClick={() => handleClick(0)} />
+        <Cell value={1} isOpened={false} onClick={() => handleClick(1)} />
+        <Cell value={0} isOpened={false} onClick={() => handleClick(2)} />
       </div>
       <div className='row'>
-        <Cell value='0' onClick={() => handleClick(3)} />
-        <Cell value='0' onClick={() => handleClick(4)} />
-        <Cell value='0' onClick={() => handleClick(5)} />
+        <Cell value={-1} isOpened={false} onClick={() => handleClick(3)} />
+        <Cell value={1} isOpened={false} onClick={() => handleClick(4)} />
+        <Cell value={0} isOpened={false} onClick={() => handleClick(5)} />
       </div>
       <div className='row'>
-        <Cell value='0' onClick={() => handleClick(6)} />
-        <Cell value='0' onClick={() => handleClick(7)} />
-        <Cell value='0' onClick={() => handleClick(8)} />
+        <Cell value={1} isOpened={false} onClick={() => handleClick(6)} />
+        <Cell value={1} isOpened={false} onClick={() => handleClick(7)} />
+        <Cell value={0} isOpened={false} onClick={() => handleClick(8)} />
       </div>
     </div>
   )
