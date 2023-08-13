@@ -19,18 +19,16 @@ type CellProps = {
 }
 
 const Cell = (props: CellProps) => {
-  const display = (props: CellProps): string => {
-    // 開封前
-    if (!props.isOpened) return "▓"; // 開ける前は灰色になっている
+  const style = props.isOpened ? {} : { backgroundColor: "#6f6f6f" }
 
-    // 開封後
-    if (props.value === -1) return "💣";
-    if (props.value === 0) return "";
-    return props.value.toString();
-  }
+  let content: string;
+  if (!props.isOpened) content = "";
+  else if (props.value === -1) content = "💣";
+  else if (props.value === 0) content = "";
+  else content = props.value.toString();
 
   return (
-    <button className='cell' onClick={props.onClick}>{display(props)}</button>
+    <button className='cell' onClick={props.onClick} style={style}> {content}</button >
   )
 }
 
