@@ -16,20 +16,26 @@ function App() {
 type CellProps = {
   value: number,
   isOpened: boolean,
-  onClick: React.MouseEventHandler // これでいい？
+  existsFlag: boolean,
+  onClick: React.MouseEventHandler,
+  onRightClick: React.MouseEventHandler,
 }
 
 const Cell = (props: CellProps) => {
   const style = props.isOpened ? {} : { backgroundColor: "#6f6f6f" }
 
-  let content: string;
-  if (!props.isOpened) content = "";
-  else if (props.value === -1) content = "💣";
-  else if (props.value === 0) content = "";
-  else content = props.value.toString();
+  let content: string = "";
+  if (!props.isOpened) {
+    if (props.existsFlag) content = "🚩";
+    else content = "";
+  } else {
+    if (props.value === -1) content = "💣";
+    else if (props.value === 0) content = "";
+    else content = props.value.toString();
+  }
 
   return (
-    <button className='cell' onClick={props.onClick} style={style}> {content}</button >
+    <button className='cell' onClick={props.onClick} onContextMenu={props.onRightClick} style={style}>{content}</button>
   )
 }
 
@@ -76,9 +82,17 @@ const Board = (props: BoardProps) => {
   }
   const [cells, setCells] = useState(makeBoard()); // stateの意味は現状薄いが，クリック後に盤面生成する場合は役立つかも？
   const [isGameOver, setIsGameOver] = useState(false);
+  const [existsFlag, setExistsFlag] = useState(Array(numberOfCells).fill(false));
+
+  const handleRightClick = (i: number) => {
+    if (isCellsOpened[i]) return;
+    const tmp = existsFlag.slice();
+    tmp[i] = !tmp[i];
+    setExistsFlag(tmp);
+  }
 
   const handleClick = (i: number) => {
-    if (isGameOver) return;
+    if (isGameOver || existsFlag[i]) return;
     const _isCellsOpened: Array<boolean> = isCellsOpened.slice();
     _isCellsOpened[i] = true; // setState()は変更をリクエストするだけなので即時更新はされない．なのでまとめてsetしたほうがいい
     if (cells[i] !== 0) {
@@ -119,7 +133,7 @@ const Board = (props: BoardProps) => {
       for (let j = 0; j < props.width; ++j) {
         const idx: number = i * props.width + j;
         cellList.push(
-          <Cell value={cells[idx]} isOpened={isCellsOpened[idx]} onClick={() => handleClick(idx)} key={idx} />
+          <Cell value={cells[idx]} isOpened={isCellsOpened[idx]} existsFlag={existsFlag[idx]} onClick={() => handleClick(idx)} onRightClick={() => handleRightClick(idx)} key={idx} />
         );
       }
       ret.push(<div className='row' key={i}>{cellList}</div>);
