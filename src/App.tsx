@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Board width={3} height={3} />
+        <Board width={3} height={3} bombCount={2} />
       </header>
     </div>
   );
@@ -37,7 +37,8 @@ const Cell = (props: CellProps) => {
 // ====== Board ======
 type BoardProps = {
   width: number,
-  height: number
+  height: number,
+  bombCount: number,
 }
 
 const makeRandomInts = (min: number, max: number, count: number): Array<number> => {
@@ -64,7 +65,7 @@ const Board = (props: BoardProps) => {
   const makeBoard = () => {
     // set bomb and number
     let bombs: Array<number> = Array(numberOfCells).fill(0);
-    const randomInts: Array<number> = makeRandomInts(0, numberOfCells, 1);
+    const randomInts: Array<number> = makeRandomInts(0, numberOfCells, props.bombCount);
     for (let i of randomInts) {
       // set bomb
       bombs[i] = -1;
@@ -75,8 +76,8 @@ const Board = (props: BoardProps) => {
         for (const dy of [-1, 0, 1]) {
           if (x + dx < 0 || x + dx >= props.width || y + dy < 0 || y + dy >= props.height) continue;
           const idx = dim2ToDim1(x + dx, y + dy);
-          if (bombs[idx] == -1) continue;
-          bombs[idx]++;
+          if (bombs[idx] === -1) continue;
+          ++bombs[idx];
         }
       }
     }
@@ -85,12 +86,11 @@ const Board = (props: BoardProps) => {
   const [cells, setCells] = useState(makeBoard());
 
   const handleClick = (i: number) => {
-    // alert("[test] " + i + " pushed!");
     const tmp = isCellsOpened.slice();
     tmp[i] = true;
     setIsCellsOpened(tmp);
 
-    if (cells[i] == -1) finishGame();
+    if (cells[i] === -1) finishGame();
   }
 
   return (
