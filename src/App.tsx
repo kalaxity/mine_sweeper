@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Board width={3} height={3} bombCount={2} />
+        <Board width={5} height={5} bombCount={3} />
       </header>
     </div>
   );
@@ -93,23 +93,22 @@ const Board = (props: BoardProps) => {
     if (cells[i] === -1) finishGame();
   }
 
+  const render = () => {
+    let ret = new Array();
+    for (let i = 0; i < props.height; ++i) {
+      let cellarray = new Array();
+      for (let j = 0; j < props.width; ++j) {
+        const idx: number = i * props.width + j;
+        cellarray.push(<Cell value={cells[idx]} isOpened={isCellsOpened[idx]} onClick={() => handleClick(idx)} />);
+      }
+      ret.push(<div className='row'>{cellarray}</div>);
+    }
+    return ret;
+  }
+
   return (
     <div className='column'>
-      <div className='row'>
-        <Cell value={cells[0]} isOpened={isCellsOpened[0]} onClick={() => handleClick(0)} />
-        <Cell value={cells[1]} isOpened={isCellsOpened[1]} onClick={() => handleClick(1)} />
-        <Cell value={cells[2]} isOpened={isCellsOpened[2]} onClick={() => handleClick(2)} />
-      </div>
-      <div className='row'>
-        <Cell value={cells[3]} isOpened={isCellsOpened[3]} onClick={() => handleClick(3)} />
-        <Cell value={cells[4]} isOpened={isCellsOpened[4]} onClick={() => handleClick(4)} />
-        <Cell value={cells[5]} isOpened={isCellsOpened[5]} onClick={() => handleClick(5)} />
-      </div>
-      <div className='row'>
-        <Cell value={cells[6]} isOpened={isCellsOpened[6]} onClick={() => handleClick(6)} />
-        <Cell value={cells[7]} isOpened={isCellsOpened[7]} onClick={() => handleClick(7)} />
-        <Cell value={cells[8]} isOpened={isCellsOpened[8]} onClick={() => handleClick(8)} />
-      </div>
+      {render()}
     </div>
   )
 }
