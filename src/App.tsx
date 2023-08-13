@@ -49,16 +49,36 @@ const makeRandomInts = (min: number, max: number, count: number): Array<number> 
 }
 
 const Board = (props: BoardProps) => {
-  const numberOfCells: number = props.height * props.height;
+  const numberOfCells: number = props.height * props.width;
   // 数字(1~)と爆弾(-1)と虚無(0)をstateで管理して，開封状況をisCellsOpenedで管理したほうがよさそう
   const [isCellsOpened, setIsCellsOpened] = useState(Array(numberOfCells).fill(false));
+
+  const dim1ToDim2 = (index: number): Array<number> => {
+    return [Math.floor(index / props.width), index % props.width];
+  }
+
+  const dim2ToDim1 = (x: number, y: number): number => {
+    return x * props.width + y;
+  }
 
   const makeBoard = () => {
     // set bomb and number
     let bombs: Array<number> = Array(numberOfCells).fill(0);
     const randomInts: Array<number> = makeRandomInts(0, numberOfCells, 1);
     for (let i of randomInts) {
+      // set bomb
       bombs[i] = -1;
+
+      // set number
+      const [x, y] = dim1ToDim2(i);
+      for (const dx of [-1, 0, 1]) {
+        for (const dy of [-1, 0, 1]) {
+          if (x + dx < 0 || x + dx >= props.width || y + dy < 0 || y + dy >= props.height) continue;
+          const idx = dim2ToDim1(x + dx, y + dy);
+          if (bombs[idx] == -1) continue;
+          bombs[idx]++;
+        }
+      }
     }
     return bombs;
   }
