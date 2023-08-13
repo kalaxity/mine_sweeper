@@ -85,7 +85,10 @@ const Board = (props: BoardProps) => {
       setIsCellsOpened(_isCellsOpened);
       if (cells[i] === -1) {
         setIsGameOver(true);
-        finishGame();
+        loseGame();
+      } else if (_isCellsOpened.filter(c => c == false).length <= props.bombCount) {
+        setIsGameOver(true);
+        winGame();
       }
       return;
     }
@@ -131,8 +134,12 @@ const Board = (props: BoardProps) => {
   )
 }
 
-const finishGame = () => {
+const loseGame = () => {
   alert("game over");
+}
+
+const winGame = () => {
+  alert("game clear!");
 }
 
 export default App;
