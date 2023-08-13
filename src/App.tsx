@@ -75,13 +75,18 @@ const Board = (props: BoardProps) => {
     return bombs;
   }
   const [cells, setCells] = useState(makeBoard()); // stateの意味は現状薄いが，クリック後に盤面生成する場合は役立つかも？
+  const [isGameOver, setIsGameOver] = useState(false);
 
   const handleClick = (i: number) => {
+    if (isGameOver) return;
     const _isCellsOpened: Array<boolean> = isCellsOpened.slice();
     _isCellsOpened[i] = true; // setState()は変更をリクエストするだけなので即時更新はされない．なのでまとめてsetしたほうがいい
     if (cells[i] !== 0) {
       setIsCellsOpened(_isCellsOpened);
-      if (cells[i] === -1) finishGame();
+      if (cells[i] === -1) {
+        setIsGameOver(true);
+        finishGame();
+      }
       return;
     }
 
