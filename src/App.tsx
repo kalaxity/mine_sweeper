@@ -4,9 +4,8 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <Board width={5} height={5} bombCount={3} />
-      </header>
+      <header className="App-header"></header>
+      <Board width={5} height={5} bombCount={3} />
     </div>
   );
 }
@@ -142,7 +141,7 @@ const Board = (props: BoardProps) => {
   }
 
   return (
-    <div className='column'>
+    <div className='board'>
       {render()}
     </div>
   )
