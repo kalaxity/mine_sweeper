@@ -4,7 +4,7 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header"></header>
+      <header className='title'>💣Mine Sweeper💣</header>
       <Board width={5} height={5} bombCount={3} />
     </div>
   );
@@ -141,9 +141,15 @@ const Board = (props: BoardProps) => {
   }
 
   return (
-    <div className='board'>
-      {render()}
-    </div>
+    <>
+      <header className="App-header">
+        爆弾数：{props.bombCount} / 残りセル数：{isCellsOpened.filter(c => c == false).length}
+      </header>
+      <div className='board'>
+        {render()}
+      </div>
+    </>
+
   )
 }
 
