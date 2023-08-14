@@ -4,9 +4,12 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <Board width={5} height={5} bombCount={3} />
-      </header>
+      <header className='title'>💣Mine Sweeper💣</header>
+      <Board width={7} height={7} bombCount={7} />
+      <footer>
+        右クリック（スマホの場合は長押し）でフラグを立てられます．<br />
+        消す場合も同様です．
+      </footer>
     </div>
   );
 }
@@ -35,7 +38,7 @@ const Cell = (props: CellProps) => {
   }
 
   return (
-    <button className='cell' onClick={props.onClick} onContextMenu={props.onRightClick} style={style}>{content}</button>
+    <button className='cell' onClick={props.onClick} onContextMenu={(e) => { e.preventDefault(); props.onRightClick(e); }} style={style}>{content}</button>
   )
 }
 
@@ -142,9 +145,15 @@ const Board = (props: BoardProps) => {
   }
 
   return (
-    <div className='column'>
-      {render()}
-    </div>
+    <>
+      <header className="App-header">
+        爆弾数：{props.bombCount} / 残りセル数：{isCellsOpened.filter(c => c == false).length}
+      </header>
+      <div className='board'>
+        {render()}
+      </div>
+    </>
+
   )
 }
 
