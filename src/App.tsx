@@ -61,13 +61,19 @@ const makeRandomInts = (min: number, max: number, count: number): Array<number> 
 const Board = (props: BoardProps) => {
   const numberOfCells: number = props.height * props.width;
   const [isCellsOpened, setIsCellsOpened] = useState(Array(numberOfCells).fill(false));
+  const [cells, setCells] = useState(Array(numberOfCells).fill(null));
+  const [isGameOver, setIsGameOver] = useState(false);
+  const [existsFlag, setExistsFlag] = useState(Array(numberOfCells).fill(false));
+
   const dim1ToDim2 = (index: number): Array<number> => [index % props.width, Math.floor(index / props.width)];
   const dim2ToDim1 = (x: number, y: number): number => (y * props.width + x);
 
-  const makeBoard = (): Array<number> => {
+  const makeBoard = (openedCellIndex: number): Array<number> => {
     let bombs: Array<number> = Array(numberOfCells).fill(0);
     const randomInts: Array<number> = makeRandomInts(0, numberOfCells, props.bombCount);
     for (let i of randomInts) {
+      // 開封セルに爆弾が置かれないようにする
+      if (i == openedCellIndex) continue;
       // set bomb
       bombs[i] = -1;
       // set number
@@ -83,9 +89,6 @@ const Board = (props: BoardProps) => {
     }
     return bombs;
   }
-  const [cells, setCells] = useState(makeBoard()); // stateの意味は現状薄いが，クリック後に盤面生成する場合は役立つかも？
-  const [isGameOver, setIsGameOver] = useState(false);
-  const [existsFlag, setExistsFlag] = useState(Array(numberOfCells).fill(false));
 
   const handleRightClick = (i: number) => {
     if (isCellsOpened[i]) return;
@@ -94,13 +97,23 @@ const Board = (props: BoardProps) => {
     setExistsFlag(tmp);
   }
 
-  const handleClick = (i: number) => {
-    if (isGameOver || existsFlag[i]) return;
+  const handleClick = (clickedCellIndex: number) => {
+    if (isGameOver || existsFlag[clickedCellIndex]) return;
     const _isCellsOpened: Array<boolean> = isCellsOpened.slice();
-    _isCellsOpened[i] = true; // setState()は変更をリクエストするだけなので即時更新はされない．なのでまとめてsetしたほうがいい
-    if (cells[i] !== 0) {
+    _isCellsOpened[clickedCellIndex] = true; // setState()は変更をリクエストするだけなので即時更新はされない．なのでまとめてsetしたほうがいい
+
+    let _cells: Array<number> = cells.slice();
+
+    // 1. 初回クリック時 → 盤面作成
+    if (isCellsOpened.filter(c => c == true).length == 0) {
+      _cells = makeBoard(clickedCellIndex);
+      setCells(_cells);
+    }
+
+    // 2. クリックしたセルが空白でない場合
+    if (_cells[clickedCellIndex] !== 0) {
       setIsCellsOpened(_isCellsOpened);
-      if (cells[i] === -1) {
+      if (_cells[clickedCellIndex] === -1) {
         setIsGameOver(true);
         loseGame();
       } else if (_isCellsOpened.filter(c => c == false).length <= props.bombCount) {
@@ -110,8 +123,8 @@ const Board = (props: BoardProps) => {
       return;
     }
 
-    // 幅優先探索を用いて空白セルを連鎖的に消していく
-    const cellQueue: Array<number> = [i];
+    // 3. クリックしたセルが空白の場合 → 幅優先探索を用いて空白セルを連鎖的に消していく
+    const cellQueue: Array<number> = [clickedCellIndex];
     while (cellQueue.length > 0) {
       const idx = cellQueue.shift();
       if (idx === undefined) break;
@@ -122,7 +135,7 @@ const Board = (props: BoardProps) => {
           const idx_around: number = dim2ToDim1(x + dx, y + dy);
           if (idx === idx_around || _isCellsOpened[idx_around]) continue;
           _isCellsOpened[idx_around] = true;
-          if (cells[idx_around] === 0) cellQueue.push(idx_around);
+          if (_cells[idx_around] === 0) cellQueue.push(idx_around);
         }
       }
     }
