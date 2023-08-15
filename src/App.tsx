@@ -2,10 +2,37 @@ import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [values, setValues]: [Record<string, number>, any] = useState({
+    width: 7,
+    height: 7,
+    bomb: 7
+  });
+
+  /**
+   * 指定された寸法・爆弾数の盤面に変更する関数
+   * @param e formから渡されるイベント（型不明）
+   */
+  // const boardChangeHandler = (e: any) => { // 型がわからん．FormEventだと思ってたんだが…
+  //   e.preventDefault();
+  //   const form: HTMLFormElement = e.target;
+  //   const formData = new FormData(form);
+  //   const _values: Record<string, number> = { width: 7, height: 7, bomb: 7 };
+  //   formData.forEach((value, key) => {
+  //     _values[key] = parseInt(value as string); // HACK: 型アサーションしたら動いた．なぜエラー出てたかは不明
+  //   });
+  //   setValues(_values);
+  // }
+
   return (
     <div className="App">
       <header className='title'>💣Mine Sweeper💣</header>
-      <Board width={7} height={7} bombCount={7} />
+      <Board width={values["width"]} height={values["height"]} bombCount={values["bomb"]} />
+      {/* <form onSubmit={boardChangeHandler}>
+        <input name='width' type='number' defaultValue='7' min={3} max={1000} />
+        <input name='height' type='number' defaultValue='7' min={3} max={1000} />
+        <input name='bomb' type='number' defaultValue='7' min={1} max={(values["width"] * values["height"] > values["bomb"]) ? values["bomb"] : values["width"] * values["height"] - 1} />
+        <input type='submit' value='変更！' />
+      </form> */}
       <footer>
         右クリック（スマホの場合は長押し）でフラグを立てられます．<br />
         消す場合も同様です．
@@ -68,12 +95,19 @@ const Board = (props: BoardProps) => {
   const dim1ToDim2 = (index: number): Array<number> => [index % props.width, Math.floor(index / props.width)];
   const dim2ToDim1 = (x: number, y: number): number => (y * props.width + x);
 
+  // const initBoard = () => {
+  //   setIsCellsOpened(Array(numberOfCells).fill(false));
+  //   setCells(Array(numberOfCells).fill(null));
+  //   setIsGameOver(false);
+  //   setExistsFlag(Array(numberOfCells).fill(false));
+  // }
+
   const makeBoard = (openedCellIndex: number): Array<number> => {
     let bombs: Array<number> = Array(numberOfCells).fill(0);
     const randomInts: Array<number> = makeRandomInts(0, numberOfCells, props.bombCount);
     for (let i of randomInts) {
       // 開封セルに爆弾が置かれないようにする
-      if (i == openedCellIndex) continue;
+      if (i === openedCellIndex) continue;
       // set bomb
       bombs[i] = -1;
       // set number
@@ -105,7 +139,7 @@ const Board = (props: BoardProps) => {
     let _cells: Array<number> = cells.slice();
 
     // 1. 初回クリック時 → 盤面作成
-    if (isCellsOpened.filter(c => c == true).length == 0) {
+    if (isCellsOpened.filter(c => c === true).length === 0) {
       _cells = makeBoard(clickedCellIndex);
       setCells(_cells);
     }
@@ -116,7 +150,7 @@ const Board = (props: BoardProps) => {
       if (_cells[clickedCellIndex] === -1) {
         setIsGameOver(true);
         loseGame();
-      } else if (_isCellsOpened.filter(c => c == false).length <= props.bombCount) {
+      } else if (_isCellsOpened.filter(c => c === false).length <= props.bombCount) {
         setIsGameOver(true);
         winGame();
       }
@@ -126,8 +160,8 @@ const Board = (props: BoardProps) => {
     // 3. クリックしたセルが空白の場合 → 幅優先探索を用いて空白セルを連鎖的に消していく
     const cellQueue: Array<number> = [clickedCellIndex];
     while (cellQueue.length > 0) {
-      const idx = cellQueue.shift();
-      if (idx === undefined) break;
+      const idx: number = cellQueue.shift() as number;
+      // if (idx === undefined) break;
       const [x, y] = dim1ToDim2(idx);
       for (const dy of [-1, 0, 1]) {
         for (const dx of [-1, 0, 1]) {
@@ -160,13 +194,12 @@ const Board = (props: BoardProps) => {
   return (
     <>
       <header className="App-header">
-        爆弾数：{props.bombCount} / 残りセル数：{isCellsOpened.filter(c => c == false).length}
+        爆弾数：{props.bombCount} / 残りセル数：{isCellsOpened.filter(c => c === false).length}
       </header>
       <div className='board'>
         {render()}
       </div>
     </>
-
   )
 }
 
