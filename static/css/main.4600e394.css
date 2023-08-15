@@ -1,0 +1,2 @@
+body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;margin:0}code{font-family:source-code-pro,Menlo,Monaco,Consolas,Courier New,monospace}.App{text-align:center}header.title{font-size:larger}.board{flex-direction:column}.board,.row{display:flex}.row{flex-direction:row;justify-content:center}.cell,.row{flex:0 1 50px}.cell{background-color:#fff;font-size:20px}
+/*# sourceMappingURL=main.4600e394.css.map*/
